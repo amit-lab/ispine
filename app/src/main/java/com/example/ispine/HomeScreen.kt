@@ -33,7 +33,8 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    onPostureButtonClick: () -> Unit = {}  // Added callback for navigation
+    onPostureButtonClick: () -> Unit = {},
+    onConnectionStatusClick: () -> Unit = {}  // Add this new callback
 ) {
     Column(
         modifier = modifier
@@ -44,15 +45,11 @@ fun HomeScreen(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .weight(0.4f),  // Adjusted weight to make space for button
+                .weight(0.4f),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Pie Chart on Top Left
             PieChartSection(modifier = Modifier.weight(0.5f))
-
             Spacer(modifier = Modifier.width(16.dp))
-
-            // Device State on Top Right
             DeviceStateSection(modifier = Modifier.weight(0.5f))
         }
 
@@ -65,18 +62,20 @@ fun HomeScreen(
                 .weight(0.3f),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Connection Status
-            ConnectionStatusSection(modifier = Modifier.weight(0.5f))
+            // Make Connection Status clickable
+            ConnectionStatusSection(
+                modifier = Modifier.weight(0.5f),
+                onClick = onConnectionStatusClick  // Pass the click callback
+            )
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            // Battery Status
             BatteryStatusSection(modifier = Modifier.weight(0.5f))
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // "Total Posture" Button - Centered between the two sections
+        // "Total Posture" Button
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -84,17 +83,75 @@ fun HomeScreen(
             horizontalArrangement = Arrangement.Center
         ) {
             Button(
-                onClick = onPostureButtonClick,  // This will navigate to posture page
+                onClick = onPostureButtonClick,
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .height(50.dp)
             ) {
+                Text("Total Posture")
+            }
+        }
+    }
+}
+
+// Update ConnectionStatusSection to be clickable - KEEP THIS ONE
+@Composable
+fun ConnectionStatusSection(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}  // Add click handler
+) {
+    Card(
+        onClick = onClick,  // Make the whole card clickable
+        modifier = modifier.fillMaxHeight(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        shape = RoundedCornerShape(12.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Connection Status",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(
+                    modifier = Modifier
+                        .size(12.dp)
+                        .clip(CircleShape)
+                        .background(Color.Green)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = "Total Posture",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
+                    text = "Connected",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium
                 )
             }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = "Bluetooth LE",
+                fontSize = 12.sp,
+                color = Color.DarkGray
+            )
+
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "Tap to manage →",  // Add hint that it's clickable
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Medium
+            )
         }
     }
 }
@@ -203,6 +260,8 @@ fun DeviceStateItem(label: String, value: String, color: Color) {
     }
 }
 
+// DELETE THIS DUPLICATE ConnectionStatusSection FUNCTION - IT'S THE ONE WITHOUT onClick
+/*
 @Composable
 fun ConnectionStatusSection(modifier: Modifier = Modifier) {
     Card(
@@ -262,6 +321,7 @@ fun ConnectionStatusSection(modifier: Modifier = Modifier) {
         }
     }
 }
+*/
 
 @Composable
 fun BatteryStatusSection(modifier: Modifier = Modifier) {

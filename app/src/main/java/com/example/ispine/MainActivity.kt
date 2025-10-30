@@ -44,36 +44,53 @@ class MainActivity : ComponentActivity() {
 fun ISPINEApp() {
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
     var showPostureScreen by rememberSaveable { mutableStateOf(false) }
+    var showConnectionsScreen by rememberSaveable { mutableStateOf(false) }
+    var showCalibrationScreen by rememberSaveable { mutableStateOf(false) } // Add this
 
-    if (showPostureScreen) {
-        PostureScreen(onBackClick = { showPostureScreen = false })
-    } else {
-        NavigationSuiteScaffold(
-            navigationSuiteItems = {
-                AppDestinations.entries.forEach { destination ->
-                    item(
-                        icon = {
-                            Icon(
-                                destination.icon,
-                                contentDescription = destination.label
-                            )
-                        },
-                        label = { Text(destination.label) },
-                        selected = destination == currentDestination,
-                        onClick = { currentDestination = destination }
-                    )
+    // Show the appropriate screen based on state
+    when {
+        showPostureScreen -> {
+            PostureScreen(onBackClick = { showPostureScreen = false })
+        }
+        showConnectionsScreen -> {
+            ConnectionsScreen(onBackClick = { showConnectionsScreen = false })
+        }
+        showCalibrationScreen -> {
+            CalibrationScreen(onBackClick = { showCalibrationScreen = false })
+        }
+        else -> {
+            NavigationSuiteScaffold(
+                navigationSuiteItems = {
+                    AppDestinations.entries.forEach { destination ->
+                        item(
+                            icon = {
+                                Icon(
+                                    destination.icon,
+                                    contentDescription = destination.label
+                                )
+                            },
+                            label = { Text(destination.label) },
+                            selected = destination == currentDestination,
+                            onClick = { currentDestination = destination }
+                        )
+                    }
                 }
-            }
-        ) {
-            Box(modifier = Modifier.fillMaxSize()) {
-                when (currentDestination) {
-                    AppDestinations.HOME -> HomeScreen(
-                        modifier = Modifier.fillMaxSize(),
-                        onPostureButtonClick = { showPostureScreen = true }
-                    )
-                    AppDestinations.SETTINGS -> SettingsScreen(modifier = Modifier.fillMaxSize())
-                    AppDestinations.DEVICE -> DeviceScreen(modifier = Modifier.fillMaxSize())
-                    AppDestinations.CUSTOMER_CARE -> CustomerCareScreen(modifier = Modifier.fillMaxSize())
+            ) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    when (currentDestination) {
+                        AppDestinations.HOME -> HomeScreen(
+                            modifier = Modifier.fillMaxSize(),
+                            onPostureButtonClick = { showPostureScreen = true },
+                            onConnectionStatusClick = { showConnectionsScreen = true }
+                        )
+                        AppDestinations.SETTINGS -> SettingsScreen(
+                            modifier = Modifier.fillMaxSize(),
+                            onCalibrationClick = { showCalibrationScreen = true },
+                            onDeviceConnectionClick = { showConnectionsScreen = true }
+                        )
+                        AppDestinations.DEVICE -> DeviceScreen(modifier = Modifier.fillMaxSize())
+                        AppDestinations.CUSTOMER_CARE -> CustomerCareScreen(modifier = Modifier.fillMaxSize())
+                    }
                 }
             }
         }
@@ -90,7 +107,8 @@ enum class AppDestinations(
     CUSTOMER_CARE("Customer Care", Icons.Filled.Headset),
 }
 
-// Add these new Composable functions for each screen
+// Remove these old simple screen functions since you now have proper ones in separate files
+/*
 @Composable
 fun HomeScreen(modifier: Modifier = Modifier) {
     Text(
@@ -122,6 +140,7 @@ fun CustomerCareScreen(modifier: Modifier = Modifier) {
         modifier = modifier
     )
 }
+*/
 
 @Preview(showBackground = true)
 @Composable
