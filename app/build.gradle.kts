@@ -58,4 +58,7 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+
+    // ADD THIS LINE for the headset icon
+    implementation("androidx.compose.material:material-icons-extended:1.6.4")
 }

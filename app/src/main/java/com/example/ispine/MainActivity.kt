@@ -4,12 +4,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountBox
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Headset
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.PhoneAndroid
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -41,29 +43,39 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun ISPINEApp() {
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.HOME) }
+    var showPostureScreen by rememberSaveable { mutableStateOf(false) }
 
-    NavigationSuiteScaffold(
-        navigationSuiteItems = {
-            AppDestinations.entries.forEach {
-                item(
-                    icon = {
-                        Icon(
-                            it.icon,
-                            contentDescription = it.label
-                        )
-                    },
-                    label = { Text(it.label) },
-                    selected = it == currentDestination,
-                    onClick = { currentDestination = it }
-                )
+    if (showPostureScreen) {
+        PostureScreen(onBackClick = { showPostureScreen = false })
+    } else {
+        NavigationSuiteScaffold(
+            navigationSuiteItems = {
+                AppDestinations.entries.forEach { destination ->
+                    item(
+                        icon = {
+                            Icon(
+                                destination.icon,
+                                contentDescription = destination.label
+                            )
+                        },
+                        label = { Text(destination.label) },
+                        selected = destination == currentDestination,
+                        onClick = { currentDestination = destination }
+                    )
+                }
             }
-        }
-    ) {
-        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            Greeting(
-                name = "Android",
-                modifier = Modifier.padding(innerPadding)
-            )
+        ) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                when (currentDestination) {
+                    AppDestinations.HOME -> HomeScreen(
+                        modifier = Modifier.fillMaxSize(),
+                        onPostureButtonClick = { showPostureScreen = true }
+                    )
+                    AppDestinations.SETTINGS -> SettingsScreen(modifier = Modifier.fillMaxSize())
+                    AppDestinations.DEVICE -> DeviceScreen(modifier = Modifier.fillMaxSize())
+                    AppDestinations.CUSTOMER_CARE -> CustomerCareScreen(modifier = Modifier.fillMaxSize())
+                }
+            }
         }
     }
 }
@@ -73,22 +85,48 @@ enum class AppDestinations(
     val icon: ImageVector,
 ) {
     HOME("Home", Icons.Default.Home),
-    FAVORITES("Favorites", Icons.Default.Favorite),
-    PROFILE("Profile", Icons.Default.AccountBox),
+    SETTINGS("Setting", Icons.Default.Settings),
+    DEVICE("Device", Icons.Default.PhoneAndroid),
+    CUSTOMER_CARE("Customer Care", Icons.Filled.Headset),
+}
+
+// Add these new Composable functions for each screen
+@Composable
+fun HomeScreen(modifier: Modifier = Modifier) {
+    Text(
+        text = "Home Screen",
+        modifier = modifier
+    )
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
+fun SettingsScreen(modifier: Modifier = Modifier) {
     Text(
-        text = "Hello $name!",
+        text = "Settings Screen",
+        modifier = modifier
+    )
+}
+
+@Composable
+fun DeviceScreen(modifier: Modifier = Modifier) {
+    Text(
+        text = "Device Screen",
+        modifier = modifier
+    )
+}
+
+@Composable
+fun CustomerCareScreen(modifier: Modifier = Modifier) {
+    Text(
+        text = "Customer Care Screen",
         modifier = modifier
     )
 }
 
 @Preview(showBackground = true)
 @Composable
-fun GreetingPreview() {
+fun AppPreview() {
     ISPINETheme {
-        Greeting("Android")
+        ISPINEApp()
     }
 }
